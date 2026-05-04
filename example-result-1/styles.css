@@ -1,0 +1,86 @@
+/* Minimal styling for the Weather App.
+   Goals (task 6.1): table readability, visible loading indicator,
+   visible error styling. No redesign. */
+
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  margin: 2rem;
+  color: #222;
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin: 0 0 1rem;
+}
+
+/* Search form: small gap between input and button. */
+#search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#city-input {
+  flex: 0 1 20rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+}
+
+#search-button {
+  padding: 0.4rem 0.9rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Loading indicator: clearly visible while a search is in flight. */
+#loading {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0.75rem;
+  background: #eef5ff;
+  border: 1px solid #8ab4f8;
+  color: #1a3e8c;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* Error message: visibly distinct so the user notices it. */
+#error {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0.75rem;
+  background: #fdecea;
+  border: 1px solid #d93025;
+  color: #a50e0e;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* Forecast table: borders, padding, legible typography. */
+.forecast-table {
+  border-collapse: collapse;
+  margin-top: 1rem;
+  min-width: 28rem;
+}
+
+.forecast-table th,
+.forecast-table td {
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.75rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.forecast-table thead th {
+  background: #f2f2f2;
+  font-weight: 600;
+}
+
+.forecast-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.forecast-table .icon-cell {
+  font-size: 1.4rem;
+  text-align: center;
+  width: 2.5rem;
+}

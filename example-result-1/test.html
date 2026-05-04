@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Weather App Tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; }
+    #banner { padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; margin-bottom: 1rem; }
+    .pass { background: #d4edda; color: #155724; }
+    .fail { background: #f8d7da; color: #721c24; }
+    pre { background: #f4f4f4; padding: 0.75rem; border-radius: 4px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Weather App Tests</h1>
+  <div id="banner">Running tests&hellip;</div>
+  <pre id="log"></pre>
+
+  <script type="module">
+    import { iconFor } from './js/icons.js';
+    import { collapseToFiveDays } from './js/transform.js';
+
+    const SUN = '\u2600\uFE0F';   // ☀️
+    const RAIN = '\uD83C\uDF27\uFE0F'; // 🌧️
+
+    const logEl = document.getElementById('log');
+    let failed = 0;
+
+    function log(line) {
+      logEl.textContent += line + '\n';
+    }
+
+    function assertEqual(actual, expected, label) {
+      const ok = Object.is(actual, expected);
+      console.assert(ok, label, { actual, expected });
+      if (ok) {
+        log(`PASS: ${label}`);
+      } else {
+        failed += 1;
+        log(`FAIL: ${label}\n  expected: ${JSON.stringify(expected)}\n  actual:   ${JSON.stringify(actual)}`);
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // Icon checks (Requirements 3.3, 3.4, 3.6 precedence, 3.5, 3.7)
+    // -----------------------------------------------------------------
+    assertEqual(iconFor('Sunny'), SUN, 'iconFor("Sunny") → ☀️');
+    assertEqual(iconFor('Chance Rain Showers'), RAIN, 'iconFor("Chance Rain Showers") → 🌧️');
+    assertEqual(iconFor('Partly Sunny'), SUN, 'iconFor("Partly Sunny") → ☀️ (sunny beats cloudy)');
+
+    // -----------------------------------------------------------------
+    // collapseToFiveDays check (Requirement 2.4)
+    //
+    // Fixture uses local-time ISO strings (no offset) so the grouping
+    // by local calendar date is deterministic across timezones.
+    //
+    // Shape: one leading night-only period (should be dropped), then
+    // six complete day/night pairs (should be capped at the first 5).
+    // -----------------------------------------------------------------
+    const fixture = [
+      // Leading night-only edge — should be dropped.
+      { startTime: '2025-06-02T22:00:00', isDaytime: false, temperature: 54, temperatureUnit: 'F', shortForecast: 'Clear' },
+
+      // 2025-06-03 — Sunny
+      { startTime: '2025-06-03T12:00:00', isDaytime: true,  temperature: 78, temperatureUnit: 'F', shortForecast: 'Sunny' },
+      { startTime: '2025-06-03T22:00:00', isDaytime: false, temperature: 55, temperatureUnit: 'F', shortForecast: 'Clear' },
+
+      // 2025-06-04 — Partly Sunny
+      { startTime: '2025-06-04T12:00:00', isDaytime: true,  temperature: 80, temperatureUnit: 'F', shortForecast: 'Partly Sunny' },
+      { startTime: '2025-06-04T22:00:00', isDaytime: false, temperature: 58, temperatureUnit: 'F', shortForecast: 'Partly Cloudy' },
+
+      // 2025-06-05 — Chance Rain Showers
+      { startTime: '2025-06-05T12:00:00', isDaytime: true,  temperature: 72, temperatureUnit: 'F', shortForecast: 'Chance Rain Showers' },
+      { startTime: '2025-06-05T22:00:00', isDaytime: false, temperature: 52, temperatureUnit: 'F', shortForecast: 'Rain Likely' },
+
+      // 2025-06-06 — Cloudy
+      { startTime: '2025-06-06T12:00:00', isDaytime: true,  temperature: 70, temperatureUnit: 'F', shortForecast: 'Cloudy' },
+      { startTime: '2025-06-06T22:00:00', isDaytime: false, temperature: 50, temperatureUnit: 'F', shortForecast: 'Overcast' },
+
+      // 2025-06-07 — Snow
+      { startTime: '2025-06-07T12:00:00', isDaytime: true,  temperature: 35, temperatureUnit: 'F', shortForecast: 'Snow' },
+      { startTime: '2025-06-07T22:00:00', isDaytime: false, temperature: 20, temperatureUnit: 'F', shortForecast: 'Snow Showers' },
+
+      // 2025-06-08 — Clear (should be cut off by the 5-day cap)
+      { startTime: '2025-06-08T12:00:00', isDaytime: true,  temperature: 82, temperatureUnit: 'F', shortForecast: 'Clear' },
+      { startTime: '2025-06-08T22:00:00', isDaytime: false, temperature: 60, temperatureUnit: 'F', shortForecast: 'Clear' },
+    ];
+
+    const days = collapseToFiveDays(fixture);
+
+    assertEqual(days.length, 5, 'collapseToFiveDays returns exactly 5 days');
+
+    // Strictly increasing isoDate.
+    let strictlyIncreasing = true;
+    for (let i = 1; i < days.length; i += 1) {
+      if (!(days[i].isoDate > days[i - 1].isoDate)) {
+        strictlyIncreasing = false;
+        break;
+      }
+    }
+    assertEqual(strictlyIncreasing, true, 'isoDate values are strictly increasing');
+
+    // Spot-check the first and last isoDate (first-5 cap, leading-night drop).
+    assertEqual(days[0].isoDate, '2025-06-03', 'first day isoDate is 2025-06-03 (leading night dropped)');
+    assertEqual(days[4].isoDate, '2025-06-07', 'fifth day isoDate is 2025-06-07 (cap at 5)');
+
+    // Highs come from the day period; lows come from the night period.
+    assertEqual(days[0].highF, 78, 'day 0 highF is 78');
+    assertEqual(days[0].lowF,  55, 'day 0 lowF is 55');
+    assertEqual(days[2].highF, 72, 'day 2 highF is 72 (Chance Rain Showers)');
+    assertEqual(days[4].lowF,  20, 'day 4 lowF is 20 (Snow)');
+
+    // -----------------------------------------------------------------
+    // Banner
+    // -----------------------------------------------------------------
+    const banner = document.getElementById('banner');
+    if (failed === 0) {
+      banner.textContent = 'All tests passed';
+      banner.className = 'pass';
+    } else {
+      banner.textContent = `Some tests failed — see console (${failed} failing)`;
+      banner.className = 'fail';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App — 5-Day Forecast</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>5-Day Weather Forecast</h1>
+
+      <form id="search-form">
+        <input
+          id="city-input"
+          type="search"
+          name="city"
+          placeholder="Enter a US city name"
+          autocomplete="off"
+        />
+        <button id="search-button" type="submit">Search</button>
+      </form>
+
+      <div id="loading" hidden>Loading…</div>
+      <div id="error" hidden></div>
+      <div id="forecast-container"></div>
+    </main>
+
+    <script type="module" src="js/ui.js"></script>
+  </body>
+</html>
