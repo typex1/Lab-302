@@ -1,5 +1,21 @@
 # Lab-302
 
+Stats:
+* Model choice: Claude Opus 4.7
+* Initial requirements.md creation: 1.6 credits, 1:24min
+* Additional guidance prompt, requirements.md update: 1.21 credits, 2:00min
+* design.md creation: 1.8 credits, 3:51min
+* tasks.md creation: 1.58 credits, 1:51min
+* updating tasks.md based on steering doc "additional-steering.md": 4.47 credits, 5:26min
+* Task 1: 2.33 credits, 2:48min
+* Create docs/README.md and docs/README_PL.md: 2.28 credits, 1:38min
+* Task 2: 4.47 credits, 2:00min
+* Task 3: 2.43 credits, 1:56min
+* Task 4: 3.07 credits, 5:11min
+* Tasks 5 and 6: 11.11 credits, 3:00min
+* Credit cost with Kiro Pro license: US$0.02 per 1 credit.
+* Rough token-to-credit relationship, based on above steps up until "updating tasks.md": 13,000 tokens = 16 credits
+
 Prompt:
 ```
 Create a simple weather app that displays current weather conditions 
