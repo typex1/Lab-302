@@ -42,7 +42,7 @@ Agent Hook, actual hook creation:
 ```
 Whenever the English documentation under docs/README.md is changed, also update the Polish one in docs/README_PL.md
 ```
-Create a new steering doc named like this:
+After tasks.md is created: create a new steering doc named like this:
 ```
 additional-steering.md
 ```
