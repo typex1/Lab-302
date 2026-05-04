@@ -45,6 +45,7 @@ Point Kiro to the new steering doc:
 ```
 Please read the steering documents. Follow the guidance provided when we are ready to generate tasks.
 ```
-
+Start:
 ```
+Start the application
 ```
